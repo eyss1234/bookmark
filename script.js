@@ -6,7 +6,7 @@ const websiteNameEl= document.getElementById('website-name');
 const websiteUrlEl = document.getElementById('website-url');
 const bookmarksContainer = document.getElementById('bookmarks-container');
 
-let bookmarks = [];
+let bookmarks = {};
 
 // Show Modal, Focus on Input
 function showModal() {
@@ -31,15 +31,17 @@ function validate(nameValue, urlValue) {
     alert('Please provide a valid web address');
     return false;
   }
+  // valid
   return true;
 }
 
 // Build bookmarks DOM
 function buildBookmarks() {
+  // remove all bookmark elements
   bookmarksContainer.textContent = '';
-  bookmarks.forEach((bookmark) => {
-    // remove all bookmark elements
-    const {name, url} = bookmark;
+  // build items
+  Object.keys(bookmarks).forEach((id) => {
+    const {name, url} = bookmarks[id];
     // item
     const item = document.createElement('div');
     item.classList.add('item');
@@ -47,7 +49,7 @@ function buildBookmarks() {
     const closeIcon = document.createElement('i');
     closeIcon.classList.add('fa-regular', 'fa-circle-xmark');
     closeIcon.setAttribute('title', 'Delete Bookmark');
-    closeIcon.setAttribute('onClick', `deleteBookmark('${url}')`);
+    closeIcon.setAttribute('onClick', `deleteBookmark('${id}')`);
     // favicon / link container
     const linkInfo = document.createElement('div');
     linkInfo.classList.add('name');
@@ -69,10 +71,13 @@ function buildBookmarks() {
 
 // Fetch Bookmarks from local storage
 function fetchBookmarks() {
+  // get bookmarks from localStorage if available
   if (localStorage.getItem('bookmarks')) {
     bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
   } else {
-    bookmarks = [
+    // create bookmarks object in localStorage
+    const id= `https://troopl.com/eyssantos`;
+    bookmarks[id] = [
       {
         name: 'Portfolio',
         url: 'https://troopl.com/eyssantos',
@@ -84,12 +89,10 @@ function fetchBookmarks() {
 }
 
 // Delete bookmark 
-function deleteBookmark(url) {
-  bookmarks.forEach((bookmark, i) => {
-    if (bookmark.url === url) {
-      bookmarks.splice(i, 1);
-    }
-  });
+function deleteBookmark(id) {
+  if (bookmarks[id]) {
+    delete bookmarks[id];
+  };
   // update bookmarks array in localStorage, re-populate DOM
   localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
   fetchBookmarks();
