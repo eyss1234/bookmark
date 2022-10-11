@@ -34,6 +34,22 @@ function validate(nameValue, urlValue) {
   return true;
 }
 
+// Fetch Bookmarks from local storage
+function fetchBookmarks() {
+  if (localStorage.getItem('bookmarks')) {
+    bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+  } else {
+    bookmarks = [
+      {
+        name: 'Portfolio',
+        url: 'https://troopl.com/eyssantos',
+      }
+    ];
+    localStorage.setItem('bookmakrs', JSON.stringify(bookmarks))
+  }
+  console.log(bookmarks);
+}
+
 // Handle data from form
 function storeBookmark(e) {
   e.preventDefault();
@@ -51,9 +67,13 @@ function storeBookmark(e) {
   };
   bookmarks.push(bookmark);
   localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  fetchBookmarks();
   bookmarkForm.reset();
   websiteNameEl.focus();
 }
 
 // Event Listener
 bookmarkForm.addEventListener('submit', storeBookmark);
+
+// On load, fetch bookmarks
+fetchBookmarks();
